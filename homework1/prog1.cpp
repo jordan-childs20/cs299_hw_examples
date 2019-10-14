@@ -10,38 +10,38 @@
 #include <cstring>
 using namespace::std;
 
-/*
-  Constructor, sets all lists heads to null;
-*/
+/**
+ * Constructor
+ */
 college_life::college_life()
 {
     lists[0] = NULL;
     lists[1] = NULL;
     lists[2] = NULL;
-};
+}
 
-/*
-   Destructor deallocates all dynamicly allocated memory;
+/**
+ * Destructor
 */
 
 college_life::~college_life()
 {
-  node * curr;
   node * temp;
   for(int i; i < 3; i++)
   {
     temp = lists[i];
-    while(curr != NULL)
+    while(lists[i] != NULL)
     {
-      temp = curr;
-      curr = curr->next;
+      temp = lists[i];
+      lists[i] = lists[i]->next;
+      delete [] temp->hint;
       delete temp;
     }
   }
-};
+}
 
 /*
-    Adds node back to list, in proper order sorted by likes
+    Adds node back to list, in order of likes
     
     @param node* head : Head node of list
     @param newNode : node passed in to add
@@ -54,7 +54,8 @@ int college_life::add_node(node * & head, node * newNode)
   {
     head = newNode;
   }
-  else if(newNode->likes > head->likes)
+  //if the node being added has more likes than the head, add new node at the head
+  else if(newNode->likes >= head->likes)
   {
     newNode->next = head;
     head = newNode;
@@ -64,8 +65,10 @@ int college_life::add_node(node * & head, node * newNode)
     node * curr = head;
     node * prev = head;
 
+    //find the postion in the LL where the node should be added
     while(curr->next != NULL)
     {
+      //once the postion is found, set pointers to and break out of loop
       if(curr->likes <= newNode->likes)
       {
         prev = curr;
@@ -75,16 +78,9 @@ int college_life::add_node(node * & head, node * newNode)
       prev = curr;
       curr = curr->next;
     }
-    if(prev==curr)
-    {
-      curr->next = newNode;
-    }
-    else
-    {
+      //add the new node to the list
       prev->next = newNode;
       newNode->next = curr;
-    }
-    
   }
   return 1;
 }
@@ -178,7 +174,7 @@ int college_life::like(int category, char hint[])
   @return int: 0/1 error checking
 
 */
-int college_life::add_hint(int category, char hint[])
+int college_life::add_hint(int category, char * hint)
 {
   node * newNode = new node;
   newNode->hint = new char[sizeof(*hint)];
