@@ -1,0 +1,6 @@
+
+
+int menu();
+
+int again();
+
